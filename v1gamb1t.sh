@@ -134,34 +134,34 @@ echo "[OK]"
 #-------------------------------------------------
 # ESPERA CARTAO
 #-------------------------------------------------
-ALLOW_OVERWRITE=0
+PERMITE_ESCRITA=0
 NEW_UID="${UID}"
-while [ ${ALLOW_OVERWRITE} -eq 0 ]; do
+while [ ${PERMITE_ESCRITA} -eq 0 ]; do
 printf " %-55s" "Coloque o cartao em branco!"
  LER_NOVO_UID="FALSE"
  while [ "${LER_NOVO_UID}" == "FALSE" ]; do 
   NEW_DATA="$(${ANTICOL} 2>&1)"
-  NEW_FAILED=$(echo ${NEW_DATA}|grep -c "Error: No tag available")
-  if [ ${NEW_FAILED} -eq 0 ]; then 
-   NEW_CARD_UID=$(echo "${NEW_DATA}"|grep "UID:"|awk '{print $2}')
-   NEW_CARD_ATQA=$(echo "${NEW_DATA}"|grep "ATQA:"|awk '{print $2}')
-   NEW_CARD_SAK=$(echo "${NEW_DATA}"|grep "SAK:"|awk '{print $2}')
-   if [ "${NEW_CARD_UID}" == "" -o "${NEW_CARD_ATQA}" == "" -o "${NEW_CARD_SAK}" == "" ]; then 
+  NOVO_FAILED=$(echo ${NEW_DATA}|grep -c "Erro: Nenhuma Tag encontrada")
+  if [ ${NOVO_FAILED} -eq 0 ]; then 
+   NOVO_CARD_UID=$(echo "${NEW_DATA}"|grep "UID:"|awk '{print $2}')
+   NOVO_CARD_ATQA=$(echo "${NEW_DATA}"|grep "ATQA:"|awk '{print $2}')
+   NOVO_CARD_SAK=$(echo "${NEW_DATA}"|grep "SAK:"|awk '{print $2}')
+   if [ "${NOVO_CARD_UID}" == "" -o "${NOVO_CARD_ATQA}" == "" -o "${NOVO_CARD_SAK}" == "" ]; then 
     sleep .5
    else
     LER_NOVO_UID="Sucesso!"
    fi
   fi
  done
- if [ "${CARD_UID}" == "${NEW_CARD_UID}" ]; then 
+ if [ "${CARD_UID}" == "${NOVO_CARD_UID}" ]; then 
   echo "[AVISO!]"
   printf "\n ### O novo cartão possui o mesmo UID do antigo!\n\n"
   read -r -p " Deseja Sobreescrever ? Y/N " resposta
   if [[ "$resposta" =~ ^([yY][eE][sS]|[yY])+$ ]]
    then
-    ALLOW_OVERWRITE=1
+    PERMITE_ESCRITA=1
   else
-   ALLOW_OVERWRITE=0
+   PERMITE_ESCRITA=0
    sleep .5
    printf "\n %-55s" "Remova o cartao original... "
    CARTAO_REMOV=0
@@ -175,7 +175,7 @@ printf " %-55s" "Coloque o cartao em branco!"
   fi
  else
   echo "[OK]"
-  ALLOW_OVERWRITE=1
+  PERMITE_ESCRITA=1
  fi
 done
 #----------------------------------------
